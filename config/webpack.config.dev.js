@@ -137,7 +137,6 @@ module.exports = {
           /\.html$/,
           /\.(js|jsx)$/,
           /\.css$/,
-          /\.scss$/,
           /\.sass$/,
           /\.json$/,
           /\.bmp$/,
@@ -149,11 +148,6 @@ module.exports = {
         options: {
           name: 'static/media/[name].[hash:8].[ext]',
         },
-      },
-      {
-        test: /\.scss$/,
-        include: paths.appSrc,
-        loaders: ["style", "css", "sass"]
       },
       // "url" loader works like "file" loader except that it embeds assets
       // smaller than specified limit in bytes as data URLs to avoid requests.
@@ -185,7 +179,7 @@ module.exports = {
       // In production, we use a plugin to extract that CSS to a file, but
       // in development "style" loader enables hot editing of CSS.
       {
-        test: /\.css$/,
+        test: /\.sass$/,
         use: [
           require.resolve('style-loader'),
           {
@@ -212,6 +206,7 @@ module.exports = {
               ],
             },
           },
+          require.resolve('sass-loader'),
         ],
       },
       // ** STOP ** Are you adding a new loader?
