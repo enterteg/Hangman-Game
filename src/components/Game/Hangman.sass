@@ -1,3 +1,11 @@
+@mixin visible()
+  opacity: 0
+  transition: 0.3s ease all
+  transform: scale(0.1)
+  &--visible
+    transform: scale(1)
+    opacity: 1
+
 .Hangman
   flex: 0.5
   &-Content
@@ -19,32 +27,43 @@
     position: relative
     top: -2rem
     z-index: 1
+    @include visible()
 
   &-Neck
     position: relative
     top: -5rem
     z-index: 0
+    @include visible()
 
   &-Corpus
     display: inline-block
     position: relative
+    @include visible()
+
   &-CorpusPart
     transform: translateY(-7.5rem)
     display: inline-block
     vertical-align: top
+
   &-LeftHand, &-RightHand
     position: relative
     vertical-align: bottom
     z-index: 0
+    @include visible()
+
   &-LeftHand
     left: 6.5rem
-    top: -3.5rem
+    top: -10.5rem
   &-RightHand
     right: 6.5rem
-    top: -3.5rem
+    top: -10.5rem
   &-LeftArm, &-RightArm
     position: relative
     z-index: 1
+    top: -7rem
+    @include visible()
+
+
   &-LeftArm
     left: 4rem
   &-RightArm
@@ -56,6 +75,7 @@
     position: relative
     z-index: 1
     top: -1rem
+    @include visible()
   &-LeftLeg
     left: -0.3rem
   &-RightLeg
@@ -68,3 +88,4 @@
   &-RightFoot, &-LeftFoot
     position: relative
     z-index: 0
+    @include visible()

@@ -18,25 +18,46 @@ import RightLeg from '../../images/right-leg.png';
 import './Hangman.sass';
 
 const Hangman = ({ missedTimes }) => {
+  const classHelper = (baseClass, minVal) => (
+    classNames(baseClass, {
+      [`${baseClass}--visible`]: missedTimes >= minVal,
+    })
+  );
+
+  const headClasses = classHelper('Hangman-Head', 1);
+  const neckClasses = classHelper('Hangman-Neck', 2);
+  const corpusClasses = classHelper('Hangman-CorpusPart Hangman-Corpus', 3);
+  const rightArmClasses = classHelper('Hangman-CorpusPart Hangman-RightArm', 4);
+  const leftArmClasses = classHelper('Hangman-CorpusPart Hangman-LeftArm', 5);
+  const rightHandClasses = classHelper('Hangman-CorpusPart Hangman-RightHand', 6);
+  const leftHandClasses = classHelper('Hangman-CorpusPart Hangman-LeftHand', 7);
+
+  const rightLegClasses = classHelper('Hangman-RightLeg', 8);
+  const leftLegClasses = classHelper('Hangman-LeftLeg', 9);
+  const rightFootClasses = classHelper('Hangman-RightFoot', 10);
+  const leftFootClasses = classHelper('Hangman-LeftFoot', 11);
+
 
   return (
     <div className="Hangman">
       <div className="Hangman-Content">
-        <img className="Hangman-Bar" src={Bar} />
-        <img className="Hangman-Head" src={Head} />
-        <img className="Hangman-Neck" src={Neck} />
+        <img alt="hangmanPart" className="Hangman-Bar" src={Bar} />
+        <img alt="hangmanPart" className={headClasses} src={Head} />
+        <img alt="hangmanPart" className={neckClasses} src={Neck} />
+
         <div>
-          <img className="Hangman-CorpusPart Hangman-LeftHand" src={LeftHand} />
-          <img className="Hangman-CorpusPart Hangman-LeftArm" src={LeftArm} />
-          <img className="Hangman-CorpusPart Hangman-Corpus" src={Corpus} />
-          <img className="Hangman-CorpusPart Hangman-RightArm" src={RightArm} />
-          <img className="Hangman-CorpusPart Hangman-RightHand" src={RightHand} />
+          <img alt="hangmanPart" className={leftHandClasses} src={LeftHand} />
+          <img alt="hangmanPart" className={leftArmClasses} src={LeftArm} />
+          <img alt="hangmanPart" className={corpusClasses} src={Corpus} />
+          <img alt="hangmanPart" className={rightArmClasses} src={RightArm} />
+          <img alt="hangmanPart" className={rightHandClasses}src={RightHand} />
         </div>
+
         <div className="Hangman-Legs">
-          <img className="Hangman-LeftFoot" src={LeftFoot} />
-          <img className="Hangman-LeftLeg" src={LeftLeg} />
-          <img className="Hangman-RightLeg" src={RightLeg} />
-          <img className="Hangman-RightFoot" src={RightFoot} />
+          <img alt="hangmanPart" className={leftFootClasses} src={LeftFoot} />
+          <img alt="hangmanPart" className={leftLegClasses} src={LeftLeg} />
+          <img alt="hangmanPart" className={rightLegClasses} src={RightLeg} />
+          <img alt="hangmanPart" className={rightFootClasses} src={RightFoot} />
         </div>
       </div>
     </div>
