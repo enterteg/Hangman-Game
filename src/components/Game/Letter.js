@@ -1,7 +1,8 @@
 import React from 'react';
+import { CSSTransitionGroup } from 'react-transition-group';
 import classNames from 'classnames';
-import './Letter.sass';
 
+import './Letter.sass';
 const Letter = ({ letter, disabled }) => {
   const letterClasses = classNames('Letter', {
     'Letter--disabled': disabled,
@@ -9,7 +10,13 @@ const Letter = ({ letter, disabled }) => {
 
   return (
     <div className={letterClasses}>
-      {letter}
+      <CSSTransitionGroup
+        transitionEnterTimeout={500}
+        transitionLeave={false}
+        transitionName="Letter-Bounce"
+      >
+        {letter ? <div>{letter}</div> : null}
+      </CSSTransitionGroup>
     </div>
   );
 };

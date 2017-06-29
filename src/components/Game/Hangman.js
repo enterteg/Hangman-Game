@@ -45,7 +45,7 @@ const Hangman = ({ missedTimes }) => {
         <img alt="hangmanPart" className={headClasses} src={Head} />
         <img alt="hangmanPart" className={neckClasses} src={Neck} />
 
-        <div>
+        <div className="Hangman-CorpusParts">
           <img alt="hangmanPart" className={leftHandClasses} src={LeftHand} />
           <img alt="hangmanPart" className={leftArmClasses} src={LeftArm} />
           <img alt="hangmanPart" className={corpusClasses} src={Corpus} />

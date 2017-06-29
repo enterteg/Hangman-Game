@@ -7,7 +7,9 @@
     opacity: 1
 
 .Hangman
+  position: relative
   flex: 0.5
+  transform: scale(0.95)
   &-Content
     display: flex
     align-items: center
@@ -89,3 +91,13 @@
     position: relative
     z-index: 0
     @include visible()
+
+@media(max-width: 1700px)
+  .Hangman
+    transform: scale(0.75)
+    top: -5rem
+    left: -5rem
+@media(max-width: 1300px)
+  .Hangman
+    transform: scale(0.65)
+    top: -10rem

@@ -1,23 +1,11 @@
 import React from 'react';
-import { CSSTransitionGroup } from 'react-transition-group';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import './GameMenu.sass';
 
+import { GAME_STATES } from './Config.js';
+
 class GameMenu extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      visible: true,
-    };
-  }
-
-  startGame = () => {
-    this.setState({
-      visible: false,
-    });
-  }
-
   renderButton = (label, onClick, loading) => (
     <button
       className={classNames('GameMenu-Button', { 'GameMenu-Button--loading': loading })}
@@ -28,64 +16,55 @@ class GameMenu extends React.Component {
   )
 
   renderContent = () => {
-    const { error, restart, loading, gameOver, initialLoad, gameWon } = this.props;
+    const { restart, gameState } = this.props;
     let text;
     let buttonText;
-    let onClick = this.startGame;
+    let onClick;
 
-    // ERROR:
-    if (error) {
-      text = 'Something went wrong :(';
-      buttonText = 'Try Again'
-      onClick = restart;
-    }
+    switch (gameState) {
+      case GAME_STATES.LOADING:
+        text = 'Hangman';
+        buttonText = '';
+        onClick = () => {}; // do nothing
+        break;
 
-    // GAME OVER
-    if (gameOver) {
-      text = <span key="GameOver">Game Over</span>;
-      buttonText = 'New Word';
-      onClick = restart;
-    }
+      case GAME_STATES.INITIAL_LOAD:
+        text = 'Hangman';
+        buttonText = 'Start Game';
+        onClick = this.props.startGame;
+        break;
 
-    // GAME Won
-    if (gameWon) {
-      text = <span key="GameWon">Game Won</span>;
-      buttonText = 'One more time!';
-      onClick = restart;
-    }
+      case GAME_STATES.GAME_OVER:
+        text = 'Game Over';
+        buttonText = 'New Word';
+        onClick = restart;
+        break;
 
-    // GAME START
-    if (initialLoad) {
-      text = <span key="Hangman">Hangman</span>;
-      buttonText = 'Start Game';
-    }
+      case GAME_STATES.GAME_WON:
+        text = 'You Won!';
+        buttonText = 'One more time!';
+        onClick = restart;
+        break;
 
-    // LOADING
-    if (loading) {
-      text = <span key="Loading">Loading...</span>;
-      buttonText = '';
-      onClick = () => {}; // do nothing
+      case GAME_STATES.FETCH_ERROR:
+        text = 'Something went wrong :(';
+        buttonText = 'Try Again'
+        onClick = restart;
+        break;
     }
 
     return (
       <div className="GameMenu-Content">
-        <CSSTransitionGroup
-          transitionEnterTimeout={0}
-          transitionLeaveTimeout={300}
-          transitionName="GameMenu-FadeIn"
-        >
-          {text}
-        </CSSTransitionGroup>
-        {this.renderButton(buttonText, onClick, loading)}
+        {text}
+        {this.renderButton(buttonText, onClick, gameState === GAME_STATES.LOADING)}
       </div>
     )
   }
 
   render() {
-    const { visible } = this.state;
-    const { gameOver, loading, gameWon } = this.props;
+    const { gameState } = this.props;
     const menuClasses = classNames('GameMenu', {
-      'GameMenu--hidden': !loading && !visible && !gameOver && !gameWon,
+      'GameMenu--hidden': gameState === GAME_STATES.GAME_STARTED,
     });
 
     return (
@@ -97,8 +76,9 @@ class GameMenu extends React.Component {
 }
 
 GameMenu.propTypes = {
-  loading: PropTypes.bool.isRequired,
-  gameOver: PropTypes.bool.isRequired,
+  restart: PropTypes.func.isRequired,
+  startGame: PropTypes.func.isRequired,
+  gameState: PropTypes.number.isRequired,
 }
 
 export default GameMenu;

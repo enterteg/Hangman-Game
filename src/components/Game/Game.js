@@ -7,24 +7,16 @@ import Hangman from './Hangman';
 import MissedLetters from './MissedLetters';
 import Result from './Result';
 
+// config
+import {
+  API_ENDPOINT,
+  INITIAL_GAME_STATE,
+  GAME_STATES,
+  MAX_MISSED_LETTERS,
+} from './Config';
+
 // styles
 import './Game.sass';
-
-// constants
-const API_ENDPOINT = 'http://api.wordnik.com/v4/words.json/randomWords?hasDictionaryDef=true&minCorpusCount=0&minLength=3&maxLength=11&limit=1&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5';
-const INITIAL_GAME_STATE = () => ({
-  word: null,
-  missedLetters: new Set(),
-  missedTimes: 0,
-  foundLetters: new Set(),
-  foundWord: [],
-  loading: true,
-  wordFetchingError: null,
-  gameOver: false,
-  gameWon: false,
-});
-
-const MAX_MISSED_LETTERS = 11;
 
 class Game extends Component {
   constructor() {
@@ -33,30 +25,25 @@ class Game extends Component {
   }
 
   componentDidMount() {
-    this.initGame({ initialLoad: true });
-    window.addEventListener('keypress', this.handleKeyPress);
+    this.getWordFromAPI();
+  }
+
+  initGame = () => {
+    this.setState(INITIAL_GAME_STATE(this.state.gameState), this.getWordFromAPI);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keypress', this.handleKeyPress);
+    // if listener was added
+    if (this.gameState !== GAME_STATES.INITIAL_LOAD) {
+      window.removeEventListener('keypress', this.handleKeyPress);
+    }
   }
 
-  initGame = ({ initialLoad }) => {
-    this.setState({ ...INITIAL_GAME_STATE(), initialLoad }, this.getWordFromAPI);
-  }
-
-  gameOver = () => {
+  startGame = () => {
+    window.addEventListener('keypress', this.handleKeyPress);
     this.setState({
-      gameOver: true,
-      initialLoad: false,
-    })
-  }
-
-  gameWon = () => {
-    this.setState({
-      gameWon: true,
-      initialLoad: false,
-    })
+      gameState: GAME_STATES.GAME_STARTED,
+    });
   }
 
   handleKeyPress = (e) => {
@@ -69,7 +56,9 @@ class Game extends Component {
 
   testLetter = (letter) => {
     const { word, foundLetters, missedTimes, missedLetters } = this.state;
+    // if given letter is in word
     if (word.indexOf(letter) !== -1) {
+      // if not found before
       if (!foundLetters.has(letter)) {
         foundLetters.add(letter);
         // iterate over word and for every letter that is in found letters set add it to found word
@@ -77,45 +66,53 @@ class Game extends Component {
 
         // USER WINS
         if (!(foundWord.some(letter => letter === ''))) {
-          this.gameWon();
+          this.setState({
+            gameState: GAME_STATES.GAME_WON,
+            foundWord,
+          })
+        } else {
+          this.setState({ foundWord });
         }
-
-        this.setState({ foundWord });
       }
     } else {
+      // if letter already in missed letters do nothing
+      if (missedLetters.has(letter)) return;
       // if letter not in word and not in missed Letters:
       // add to missed letters and increment counter
-      if (missedLetters.has(letter)) return
       const newMissedTimes = missedTimes + 1;
 
       // check if game over
       const gameOver = newMissedTimes === MAX_MISSED_LETTERS
-      if (gameOver) {
-        this.gameOver();
-      }
-      this.setState({
+
+      const newState = Object.assign({
         missedLetters: missedLetters.add(letter),
         missedTimes: newMissedTimes,
-      });
+      }, gameOver ? { gameState: GAME_STATES.GAME_OVER } : {}, )
+
+      this.setState(newState);
     }
   }
 
   getWordFromAPI = () => {
+    const initialLoad = this.state.gameState === GAME_STATES.INITIAL_LOAD;
+    this.setState({
+      gameState: GAME_STATES.LOADING,
+    });
+
     axios.get(API_ENDPOINT)
       .then(response => {
         const { word } = response.data[0];
-        console.warn('TU MASZ SŁOWO LAMO: ', word);
+        console.warn('IF YOU ARE WEAK: ', btoa(word.toLowerCase()));
         this.setState({
-          loading: false,
-          word,
+          gameState: initialLoad ? GAME_STATES.INITIAL_LOAD : GAME_STATES.GAME_STARTED,
+          word: word.toLowerCase(),
           // array of empty strings of size equal to word length
           foundWord: Array(word.length).fill().map(() => ''),
         });
       })
       .catch(err => {
         this.setState({
-          loading: false,
-          wordFetchingError: true,
+          gameState: GAME_STATES.FETCH_ERROR,
         })
       })
   }
@@ -124,23 +121,16 @@ class Game extends Component {
     const {
       missedLetters,
       foundWord,
-      loading,
       missedTimes,
-      wordFetchingError,
-      gameOver,
-      gameWon,
-      initialLoad,
+      gameState,
      } = this.state;
 
     return (
       <div className="Game">
         <GameMenu
-          loading={loading}
+          gameState={gameState}
+          startGame={this.startGame}
           restart={this.initGame}
-          gameOver={gameOver}
-          gameWon={gameWon}
-          error={wordFetchingError}
-          initialLoad={initialLoad}
         />
 
         <div className="Game-TopSection">
