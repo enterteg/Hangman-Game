@@ -1,0 +1,94 @@
+@import '../../styles/variables.sass'
+
+.GameMenu
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  background-color: rgba($bgColor, 0.74)
+  z-index: 20
+  display: flex
+  align-items: center
+  justify-content: center
+  transition: 0.3s ease all
+  &-Content
+    display: flex
+    flex-direction: column
+    align-items: center
+    font-size: $veryBig
+    color: $white
+    text-transform: uppercase
+    opacity: 1
+    max-width: 80rem
+    transition: 0.3s ease all
+    position: relative
+    span
+      position: absolute
+      white-space: nowrap
+      transform: translate(-50%, -100%)
+  &--hidden
+    transform: scale(1.2)
+    visibility: hidden
+    opacity: 0
+  &-LoadingSpinner
+    width: 4rem
+    height: 4rem
+    border-radius: 50%
+    border-width: 0.5rem
+    border-style: solid
+    border-color: $orange transparent
+    animation: spin 1s ease infinite
+    margin-top: 2rem
+
+  &-Button
+    background: transparent
+    outline: none
+    border: 0.4rem dashed $orange
+    border-radius: 4.5rem
+    width: 35rem
+    height: 10rem
+    font-size: $header
+    text-transform: uppercase
+    font-weight: bold
+    color: $orange
+    font-family: 'AllerDisplay'
+    letter-spacing: 2px
+    transition: 0.5s ease all
+    margin-top: 4.5rem
+    overflow: hidden
+    position: relative
+    &:hover
+      cursor: pointer
+      background-color: rgba($orange, 0.2)
+    &--loading
+      width: 10rem
+      height: 10rem
+      border-radius: 50%
+      border: 0.4rem dashed $orange
+      animation: spin 1s ease infinite 0.5s
+      font-size: 1rem
+
+
+@keyframes spin
+  0%
+    transform: rotate(0deg) scale(1)
+  50%
+    transform: rotate(90deg) scale(1.2)
+  100%
+    transform: rotate(360deg) scale(1)
+
+
+.GameMenu-FadeIn-enter
+  opacity: 0.01
+
+.GameMenu-FadeIn-enter.GameMenu-FadeIn-enter-active
+  opacity: 1
+  transition: all 0.7s ease
+
+.GameMenu-FadeIn-leave
+  opacity: 1
+
+.GameMenu-FadeIn-leave.GameMenu-FadeIn-leave-active
+  opacity: 0.01
+  transition: all 0.3s ease
